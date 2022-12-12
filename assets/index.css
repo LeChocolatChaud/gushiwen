@@ -1,0 +1,130 @@
+body {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+    text-align: left;
+    background-color: #efdec8;
+}
+
+div#github-div {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+}
+
+div#source-code-div {
+    padding: 10px;
+    border: 0px;
+    background-color: #435bbb;
+    border-radius: 10px;
+    color: #fff;
+}
+
+div#last-commit-div {
+    margin-left: 5px;
+    padding: 10px;
+    border: 0px;
+    background-color: #603d3d;
+    border-radius: 10px;
+    color: #fff;
+    width: fit-content;
+}
+
+div#commit-container {
+    display: none;
+    margin-left: 5px;
+    margin-top: 5px;
+    padding: 10px;
+    border: 0px;
+    background-color: #72727269;
+    border-radius: 10px;
+    color: #fff;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+div#main-container {
+    display: flex;
+    align-items: left;
+    justify-content: center;
+    flex-direction: column;
+    width: 90%;
+}
+
+div#mistakes-container {
+    display: flex;
+    align-items: left;
+    justify-content: center;
+    flex-direction: column;
+    width: 90%;
+}
+
+p {
+    margin: 4px;
+}
+
+p.button-p {
+    margin: 30px;
+}
+
+button {
+    border: 0px;
+    background-color: #d28764;
+    border-radius: 15px;
+    width: 100px;
+    height: 40px;
+    color: #fff;
+}
+
+div#settings-div {
+    margin: 15px;
+    display: grid;
+    width: 100%;
+    column-gap: 5px;
+    row-gap: 5px;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: 1fr;
+}
+
+a {
+    color: #fff;
+    text-decoration: none;
+}
+
+a:link {
+    color: #fff;
+}
+
+a:visited {
+    color: #fff;
+}
+
+a:hover {
+    color: #ccc;
+}
+
+div#setting-a {
+    grid-column-start: 1;
+    grid-column-end: 6;
+    justify-self: end;
+}
+
+div#setting-b {
+    grid-column-start: 7;
+    grid-column-end: 12;
+}
+
+input {
+    background-color: #efdec8;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px #000 solid;
+}

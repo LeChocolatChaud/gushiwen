@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="assets/index.css" />
+        <script type="text/javascript" src="scripts/EnhancedXHR.js"></script>
+        <script
+            type="text/javascript"
+            src="scripts/index.js"
+            defer="defer"
+        ></script>
+        <title>中考文言文复习</title>
+    </head>
+    <body>
+        <div id="github-div">
+            <div id="source-code-div">
+                <a href="https://github.com/LeChocolatChaud/HSEETCReview"
+                    >源代码</a
+                >
+            </div>
+            <div id="last-commit-div" onclick="switchCommitContainerVisibility()">最新一次更新</div>
+            <div id="commit-container"></div>
+        </div>
+        <p class="button-p"><button onclick="onReset()">重置</button></p>
+        <div id="settings-div">
+            <span></span>
+            <div id="setting-a">
+                <label for="question-count-input">题目数量</label>
+                <input
+                    id="question-count-input"
+                    onchange="questionCount = Number.parseInt(this.value);"
+                    value="10"
+                />
+            </div>
+            <span></span>
+            <div id="setting-b">
+                <label for="question-difficulty-input">题目难度</label>
+                <input
+                    id="question-difficulty-input"
+                    onchange="changeDifficulty(this.valueAsNumber)"
+                    value="1"
+                    type="range"
+                    min="0"
+                    max="2"
+                />
+                <label
+                    id="question-difficulty-label-2"
+                    for="question-difficulty-input"
+                >
+                    50%几率空格
+                </label>
+            </div>
+        </div>
+        <div id="main-container"></div>
+        <p class="button-p">
+            <button onclick="onSubmit()" id="submit">提交</button>
+        </p>
+        <div id="mistakes-container"></div>
+    </body>
+</html>
