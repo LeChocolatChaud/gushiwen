@@ -253,7 +253,7 @@ function changeDifficulty(difficulty) {
     }
 }
 main("lunyu_only_text")
-var exhr2 = new EnhancedXMLHttpRequest("https://api.github.com/repos/LeChocolatChaud/HSEETCReview/commits/main", "GET", {
+var exhr2 = new EnhancedXMLHttpRequest("https://api.github.com/repos/LeChocolatChaud/gushiwen/commits/main", "GET", {
     accept: "application/vnd.github.v3+json",
 });
 exhr2.send();
