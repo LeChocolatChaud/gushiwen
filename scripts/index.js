@@ -115,88 +115,90 @@ function isSpecialChararcter(character) {
         character === "$" ||
         character === "%");
 }
-var exhr = new EnhancedXMLHttpRequest(window.location.origin.indexOf("github") > 0
-    ? window.location.href + "/assets/questions.qst"
-    : window.location.origin + "/assets/questions.qst", "GET");
-exhr.send();
-exhr.getResponse().then((response) => {
-    let rresponse = response.replace(/ /g, "");
-    let lines = rresponse.split("\n");
-    for (let i = 0; i < lines.length; i++) {
-        try {
-            let line = lines[i]; // used for parsing
-            let keyword = "none"; // determines KeywordedQuestion type
-            let refIndex = -1; // determines ReferenceQuestion type
-            let parts = new Array(); // normal question parts
-            let ref = null; // reference question parsing
-            let partBuffer = ""; // used for parsing
-            for (let j = 0; j < line.length; j++) {
-                switch (line[j]) {
-                    case "[":
-                        if (line.indexOf("]", j) < 0)
-                            throw new Error("Missing closing bracket.");
-                        keyword = line.substring(j + 1, line.indexOf("]", j));
-                        j = line.indexOf("]", j);
-                        break;
-                    case "|":
-                        refIndex = parts.length;
-                        break;
-                    case "$":
-                        if (line.indexOf("$", j + 1) < 0)
-                            throw new Error("Missing closing sign.");
-                        parts.push(line.substring(j, line.indexOf("$", j + 1) + 1));
-                        j = line.indexOf("$", j + 1);
-                        break;
-                    case "{":
-                        if (line.indexOf("}", j) < 0)
-                            throw new Error("Missing closing brace.");
-                        let refKeyword = line.substring(j + 1, line.indexOf("}", j));
-                        let temp = questions.find((question, _index, _arr) => {
-                            return (question instanceof ReferenceQuestion &&
-                                question.keyword == refKeyword);
-                        });
-                        if (temp) {
-                            ref = temp;
-                            for (let k = ref.refIndex; k < ref.parts.length; k++) {
-                                parts.push(ref.parts[k]);
+function main(questionLibrary) {
+    var exhr = new EnhancedXMLHttpRequest(window.location.origin.indexOf("github") > 0
+        ? window.location.href + "/assets/" + questionLibrary + ".qst"
+        : window.location.origin + "/assets/" + questionLibrary + ".qst", "GET");
+    exhr.send();
+    exhr.getResponse().then((response) => {
+        let rresponse = response.replace(/ /g, "");
+        let lines = rresponse.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+            try {
+                let line = lines[i]; // used for parsing
+                let keyword = "none"; // determines KeywordedQuestion type
+                let refIndex = -1; // determines ReferenceQuestion type
+                let parts = new Array(); // normal question parts
+                let ref = null; // reference question parsing
+                let partBuffer = ""; // used for parsing
+                for (let j = 0; j < line.length; j++) {
+                    switch (line[j]) {
+                        case "[":
+                            if (line.indexOf("]", j) < 0)
+                                throw new Error("Missing closing bracket.");
+                            keyword = line.substring(j + 1, line.indexOf("]", j));
+                            j = line.indexOf("]", j);
+                            break;
+                        case "|":
+                            refIndex = parts.length;
+                            break;
+                        case "$":
+                            if (line.indexOf("$", j + 1) < 0)
+                                throw new Error("Missing closing sign.");
+                            parts.push(line.substring(j, line.indexOf("$", j + 1) + 1));
+                            j = line.indexOf("$", j + 1);
+                            break;
+                        case "{":
+                            if (line.indexOf("}", j) < 0)
+                                throw new Error("Missing closing brace.");
+                            let refKeyword = line.substring(j + 1, line.indexOf("}", j));
+                            let temp = questions.find((question, _index, _arr) => {
+                                return (question instanceof ReferenceQuestion &&
+                                    question.keyword == refKeyword);
+                            });
+                            if (temp) {
+                                ref = temp;
+                                for (let k = ref.refIndex; k < ref.parts.length; k++) {
+                                    parts.push(ref.parts[k]);
+                                }
                             }
-                        }
-                        else {
-                            console.log(`Reference to ${refKeyword} not found.`);
-                            parts.push(line.substring(j, line.indexOf("}", j) + 1));
-                        }
-                        j = line.indexOf("}", j);
-                        break;
-                    default:
-                        partBuffer += line[j];
-                        if (j === line.length - 1 ||
-                            isSpecialChararcter(line[j + 1])) {
-                            parts.push(partBuffer);
-                            partBuffer = "";
-                        }
-                        break;
+                            else {
+                                console.log(`Reference to ${refKeyword} not found.`);
+                                parts.push(line.substring(j, line.indexOf("}", j) + 1));
+                            }
+                            j = line.indexOf("}", j);
+                            break;
+                        default:
+                            partBuffer += line[j];
+                            if (j === line.length - 1 ||
+                                isSpecialChararcter(line[j + 1])) {
+                                parts.push(partBuffer);
+                                partBuffer = "";
+                            }
+                            break;
+                    }
+                }
+                if (refIndex !== -1) {
+                    questions.push(new ReferenceQuestion(refIndex, keyword, ...parts));
+                }
+                else if (keyword !== "none") {
+                    questions.push(new KeywordedQuestion(keyword, ...parts));
+                }
+                else if (parts.length > 0) {
+                    questions.push(new Question(...parts));
                 }
             }
-            if (refIndex !== -1) {
-                questions.push(new ReferenceQuestion(refIndex, keyword, ...parts));
-            }
-            else if (keyword !== "none") {
-                questions.push(new KeywordedQuestion(keyword, ...parts));
-            }
-            else if (parts.length > 0) {
-                questions.push(new Question(...parts));
+            catch (e) {
+                console.error(e);
+                console.log(`Error parsing line ${i + 1}`);
             }
         }
-        catch (e) {
-            console.error(e);
-            console.log(`Error parsing line ${i + 1}`);
-        }
-    }
-    onReset();
-}, (error) => {
-    console.error(error);
-    mainContainer.innerHTML = "Error while loading questions.";
-});
+        onReset();
+    }, (error) => {
+        console.error(error);
+        mainContainer.innerHTML = "Error while loading questions.";
+    });
+}
 function onReset() {
     mainContainer.innerHTML = "";
     Question.answers.clear();

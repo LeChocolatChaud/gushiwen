@@ -11,7 +11,7 @@
             src="scripts/index.js"
             defer="defer"
         ></script>
-        <title>中考文言文复习</title>
+        <title>古诗文复习</title>
     </head>
     <body>
         <div id="github-div">
@@ -51,6 +51,15 @@
                 >
                     50%几率空格
                 </label>
+            </div>
+            <span></span>
+            <div id="setting-c">
+                <label for="question-library-input">题库选择</label>
+                <input
+                    id="question-library-input"
+                    onchange="main(this.value)"
+                    type="text"
+                />
             </div>
         </div>
         <div id="main-container"></div>
