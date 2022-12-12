@@ -55,11 +55,9 @@
             <span></span>
             <div id="setting-c">
                 <label for="question-library-input">题库选择</label>
-                <input
-                    id="question-library-input"
-                    onchange="main(this.value)"
-                    type="text"
-                />
+                <select onchange="main(this.value)">
+                    <option value="lunyu_only_text">《论语》原文</option>
+                </select>
             </div>
         </div>
         <div id="main-container"></div>
