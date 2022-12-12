@@ -252,6 +252,7 @@ function changeDifficulty(difficulty) {
             break;
     }
 }
+main("lunyu_only_text")
 var exhr2 = new EnhancedXMLHttpRequest("https://api.github.com/repos/LeChocolatChaud/HSEETCReview/commits/main", "GET", {
     accept: "application/vnd.github.v3+json",
 });

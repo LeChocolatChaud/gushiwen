@@ -89,7 +89,7 @@ div#settings-div {
     width: 100%;
     column-gap: 5px;
     row-gap: 5px;
-    grid-template-columns: repeat(11, 1fr);
+    grid-template-columns: repeat(18, 1fr);
     grid-template-rows: 1fr;
 }
 
@@ -119,6 +119,13 @@ div#setting-a {
 div#setting-b {
     grid-column-start: 7;
     grid-column-end: 12;
+    justify-self: right;
+}
+
+div#setting-c {
+    grid-column-start: 13;
+    grid-column-end: 18;
+    justify-self: center;
 }
 
 input {
