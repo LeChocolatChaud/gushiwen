@@ -94,19 +94,24 @@ div#settings-div {
 }
 
 a {
+    color: #000;
+    text-decoration: none;
+}
+
+a#source-code-href {
     color: #fff;
     text-decoration: none;
 }
 
-a:link {
+a#source-code-href:link {
     color: #fff;
 }
 
-a:visited {
+a#source-code-href:visited {
     color: #fff;
 }
 
-a:hover {
+a#source-code-href:hover {
     color: #ccc;
 }
 
