@@ -98,6 +98,10 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 a#source-code-href {
     color: #fff;
     text-decoration: none;
