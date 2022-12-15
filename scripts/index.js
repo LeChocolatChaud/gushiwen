@@ -116,7 +116,7 @@ function isSpecialChararcter(character) {
         character === "%");
 }
 function main(questionLibrary) {
-    questions = new Array();
+    questions.length = 0;
     var exhr = new EnhancedXMLHttpRequest(window.location.origin.indexOf("github") > 0
         ? window.location.href + "/assets/" + questionLibrary + ".qst"
         : window.location.origin + "/assets/" + questionLibrary + ".qst", "GET");
