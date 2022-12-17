@@ -97,7 +97,7 @@ class Question { // question encapsulation
                     let ppart = document.createElement("span");
                     // 50% chance
                     if (n > 0.5) { // hint
-                        if (allHint && index == this.parts.length - 1) { // prevent all hints
+                        if (allHint && index == this.parts.length - 1 && !ignoreFillings) { // prevent all hints
                             ppart = this.#createBlank(part);
                             allHint = false;
                         } else {
@@ -106,7 +106,7 @@ class Question { // question encapsulation
                         }
                     }
                     else { // blank
-                        if (allBlank && index == this.parts.length - 1) { // prevent all blanks
+                        if (allBlank && index == this.parts.length - 1 && !ignoreFillings) { // prevent all blanks
                             ppart = this.#createHint(part);
                             allBlank = false;
                         } else {
@@ -114,6 +114,7 @@ class Question { // question encapsulation
                             allHint = false;
                         }
                     }
+                    console.log(`allHint: ${allHint}\nallBlank: ${allBlank}`);
                     pElement.appendChild(ppart);
                 }
                 else { // just plain text
