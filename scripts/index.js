@@ -1,87 +1,140 @@
 "use strict";
-class Question {
+class Question { // question encapsulation
+
     constructor(...parts) {
         this._parts = parts;
     }
-    static get answers() {
+
+    static get answers() { // get all blank answers
         return this._answers;
     }
-    get parts() {
+
+    get parts() { // get all plain text form parts
         return this._parts;
     }
-    toHTMLDivElement() {
-        let divElement = document.createElement("div");
-        let pElement = document.createElement("p");
-        let bElement = document.createElement("b");
+
+    #createHint(part) { // create hint part
+        let ppart = part;
+        if (part.indexOf("%") > 0) { // if contains placeholder text
+            ppart =
+                part.substring(0, part.indexOf("%")) +
+                part.substring(
+                    part.lastIndexOf("%") + 1
+                ); // will consider all text inside the outer most '%' wrap as placeholder
+        }
+        return document.createTextNode(part.substring(1, ppart.length - 1));
+    }
+
+    #createBlank(part) { // create blank part
+        let input = document.createElement("input"); // blank input
+
+        input.type = "text"; // styling
+        input.style.color = "black";
+        input.style.backgroundColor = "#efdec8";
+        input.style.margin = "2px";
+        input.style.textAlign = "center";
+
+        let placeholder; // placeholder text
+        if (part.indexOf("%") > 0) {
+            input.placeholder = part.substring(
+                part.indexOf("%") + 1,
+                part.lastIndexOf("%")
+            ); // will consider all text inside the outer most '%' wrap as placeholder
+            placeholder = input.placeholder;
+        }
+
+        input.id = "answer-input-" + Question._answers.size; // locating id
+
+        let answer = // set answer
+            part.indexOf("%") > 0
+                ? part.substring(1, part.indexOf("%")) +
+                  part.substring(part.lastIndexOf("%") + 1, part.length - 1)
+                : part.substring(1, part.length - 1); // remove placeholder
+        
+        input.style.width =
+            placeholder && placeholder.length > answer.length
+                ? placeholder.length * 16 + "px"
+                : answer.length * 16 + "px"; // styling
+        
+        Question._answers.set(input.id, answer); // load answer to global answer array with its uid
+
+        return input;
+    }
+
+    toHTMLDivElement() { // get a full question div
+
+        let divElement = document.createElement("div"); // root div
+        let pElement = document.createElement("p"); // spacing paragraph
+
+        let bElement = document.createElement("b"); // line symbol
         bElement.innerHTML = "&nbsp;·&nbsp;";
-        pElement.appendChild(bElement);
-        try {
-            for (let part of this.parts) {
-                if (part.startsWith("$")) {
-                    let n;
-                    switch (questionDifficulty) {
+        pElement.appendChild(bElement); // append
+
+        try { // main question generator
+
+            let allBlank = true; // check if ready for being answered
+            let allHint = true;
+            let ignoreFillings = questionDifficulty != 1;
+
+            for (let index = 0; index < this.parts.length; index++) { // iterate through parts
+                let part = this.parts[index];
+
+                if (part.startsWith("$")) { // blank part
+                    let n; // determine whether this part will be a hint or a blank
+                    switch (questionDifficulty) { // check the difficulty
                         case 0:
-                            n = 1;
+                            n = 1; // always hint
                             break;
                         case 1:
-                            n = Math.random();
+                            n = Math.random(); // random number
                             break;
                         case 2:
-                            n = 0;
+                            n = 0; // always blank
                             break;
-                        default:
+                        default: // just in case ;-)
                             throw new Error("Invalid question difficulty");
                     }
-                    if (n > 0.5) {
-                        let ppart = part;
-                        if (part.indexOf("%") > 0) {
-                            ppart =
-                                part.substring(0, part.indexOf("%")) +
-                                    part.substring(part.lastIndexOf("%") + 1);
+                    let ppart = document.createElement("span");
+                    // 50% chance
+                    if (n > 0.5) { // hint
+                        if (allHint && index == this.parts.length - 1) { // prevent all hints
+                            ppart = this.#createBlank(part);
+                            allHint = false;
+                        } else {
+                            ppart = this.#createHint(part);
+                            allBlank = false;
                         }
-                        pElement.appendChild(document.createTextNode(part.substring(1, ppart.length - 1)));
                     }
-                    else {
-                        let input = document.createElement("input");
-                        input.type = "text";
-                        input.style.color = "black";
-                        input.style.backgroundColor = "#efdec8";
-                        input.style.margin = "2px";
-                        input.style.textAlign = "center";
-                        let placeholder;
-                        if (part.indexOf("%") > 0) {
-                            input.placeholder = part.substring(part.indexOf("%") + 1, part.lastIndexOf("%"));
-                            placeholder = input.placeholder;
+                    else { // blank
+                        if (allBlank && index == this.parts.length - 1) { // prevent all blanks
+                            ppart = this.#createHint(part);
+                            allBlank = false;
+                        } else {
+                            ppart = this.#createBlank(part);
+                            allHint = false;
                         }
-                        input.id = "answer-input-" + Question._answers.size;
-                        let answer = part.indexOf("%") > 0
-                            ? part.substring(1, part.indexOf("%")) +
-                                part.substring(part.lastIndexOf("%") + 1, part.length - 1)
-                            : part.substring(1, part.length - 1);
-                        input.style.width =
-                            placeholder && placeholder.length > answer.length
-                                ? placeholder.length * 16 + "px"
-                                : answer.length * 16 + "px";
-                        Question._answers.set(input.id, answer);
-                        pElement.appendChild(input);
                     }
+                    pElement.appendChild(ppart);
                 }
-                else {
+                else { // just plain text
                     pElement.appendChild(document.createTextNode(part));
                 }
             }
-            pElement.appendChild(document.createTextNode("。"));
+            if (!/[.。?？!！'"’”…]$/.test(this.parts[this.parts.length - 1])) {
+                pElement.appendChild(document.createTextNode(/[(zh)(cn)(ja)(jp)]]/gi.test(navigator.language) ?
+                "。" : "." ));
+            }
         }
-        catch (e) {
+        catch (e) { // whoa!
             console.error(e);
             pElement.innerHTML = "Error while creating question.";
         }
-        divElement.appendChild(pElement);
+        divElement.appendChild(pElement); // finally!
         return divElement;
     }
 }
 Question._answers = new Map();
-class KeywordedQuestion extends Question {
+class KeywordedQuestion extends Question { // keyworded questions encapsulation
     constructor(keyword, ...parts) {
         super(...parts);
         this._keyword = keyword;
@@ -90,12 +143,12 @@ class KeywordedQuestion extends Question {
         return this._keyword;
     }
 }
-class ReferenceQuestion extends KeywordedQuestion {
+class ReferenceQuestion extends KeywordedQuestion { // questions that can be referred to
     constructor(refIndex, keyword, ...parts) {
         super(keyword, ...parts);
         this._refIndex = refIndex;
     }
-    get refIndex() {
+    get refIndex() { // get starting reference index
         return this._refIndex;
     }
 }
@@ -253,7 +306,7 @@ function changeDifficulty(difficulty) {
             break;
     }
 }
-main("lunyu_only_text")
+main("lunyu_only_text");
 var exhr2 = new EnhancedXMLHttpRequest("https://api.github.com/repos/LeChocolatChaud/gushiwen/commits/main", "GET", {
     accept: "application/vnd.github.v3+json",
 });
